@@ -1,5 +1,5 @@
 import { Board } from "./components/Board";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import { ScoreBoard } from "./components/ScoreBoard";
 
@@ -7,6 +7,7 @@ function App() {
   const [board, setBoard] = useState(Array(9).fill(""));
   const [winner, setWinner] = useState(null);
   const [scores, setScores] = useState({ scoreX: 0, scoreO: 0 });
+  const [playerInit, setPlayerInit] = useState("X");
 
   const WIN_CONDITIONS = [
     [0, 1, 2],
@@ -28,10 +29,10 @@ function App() {
           return b;
         }
       });
-      
+
       const updateBoardO = setORandom(updateBoardX);
       const winner = checkWinner(updateBoardO);
-      
+
       if (winner) {
         setWinner(winner);
         incrementCountWinner(winner);
@@ -41,14 +42,16 @@ function App() {
   };
 
   const setORandom = (updateBoard) => {
-    if(checkWinner(updateBoard) || updateBoard.every((b) => b !== '')) {  //se fija si habra ganador o si se llenara el board
+    if (checkWinner(updateBoard) || updateBoard.every((b) => b !== "")) {
+      //se fija si habra ganador o si se llenara el board
       return updateBoard;
     }
     let copyBoard = [...updateBoard];
     const positions = [0, 1, 2, 3, 4, 5, 6, 7, 8];
     let casilla = 9; // casilla no existe en el board
 
-    for (let i = 0; i < positions.length; i++) {   //intentar ganar
+    for (let i = 0; i < positions.length; i++) {
+      //intentar ganar
       copyBoard = [...updateBoard];
       if (copyBoard[i] === "") {
         copyBoard[i] = "O";
@@ -61,7 +64,8 @@ function App() {
     copyBoard = [...updateBoard];
 
     if (casilla === 9) {
-      for (let j = 0; j < positions.length; j++) { // fijar bloqueo
+      for (let j = 0; j < positions.length; j++) {
+        // fijar bloqueo
         copyBoard = [...updateBoard];
         if (copyBoard[j] === "") {
           copyBoard[j] = "X";
@@ -93,7 +97,11 @@ function App() {
   const checkVictory = (copyBoard) => {
     for (let i = 0; i < WIN_CONDITIONS.length; i++) {
       const [x, y, z] = WIN_CONDITIONS[i];
-      if (copyBoard[x] && copyBoard[x] === copyBoard[y] && copyBoard[y] === copyBoard[z]) {
+      if (
+        copyBoard[x] &&
+        copyBoard[x] === copyBoard[y] &&
+        copyBoard[y] === copyBoard[z]
+      ) {
         return true;
       }
     }
@@ -122,13 +130,22 @@ function App() {
   };
 
   const resetGame = () => {
+    setPlayerInit((oldPlayer) => (oldPlayer === "X" ? "O" : "X"));
     setBoard(Array(9).fill(""));
     setWinner(null);
   };
 
+  useEffect(() => {
+    if (playerInit === "O") {
+      const copyBoard = [...board];
+      const updateBoardO = setORandom(copyBoard);
+      setBoard(updateBoardO);
+    }
+  }, [playerInit]);
+
   return (
     <>
-      <ScoreBoard scores={scores} lastWinner={winner}/>
+      <ScoreBoard scores={scores} lastWinner={winner} />
       <Board board={board} onClick={setValue} />
       {checkEndGame() && (
         <div className="end-game">

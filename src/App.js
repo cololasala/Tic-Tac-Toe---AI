@@ -128,7 +128,7 @@ function App() {
 
   return (
     <>
-      <ScoreBoard scores={scores} />
+      <ScoreBoard scores={scores} lastWinner={winner}/>
       <Board board={board} onClick={setValue} />
       {checkEndGame() && (
         <div className="end-game">

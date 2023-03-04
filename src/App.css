@@ -1,0 +1,14 @@
+.end-game{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.reset-button {
+    padding: 10px;
+    color: white;
+    background-color:rgb(8, 112, 203);
+    border-radius: 12%;
+    border: none;
+    cursor: pointer;
+}
